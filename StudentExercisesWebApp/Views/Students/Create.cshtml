@@ -24,7 +24,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Student.CohortId" class="control-label"></label>
-                <select asp-for="Student.CohortId" class="form-control" asp-items="ViewBag.CohortId"></select>
+                <select asp-for="Student.CohortId" class="form-control" asp-items="@Model.Cohorts"></select>
                 <span asp-validation-for="Student.CohortId" class="text-danger"></span>
             </div>
             <div class="form-group">
