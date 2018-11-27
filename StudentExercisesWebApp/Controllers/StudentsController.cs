@@ -35,9 +35,15 @@ namespace StudentExercisesWebApp.Controllers
                 return NotFound();
             }
 
+
             var student = await _context.Students
                 .Include(s => s.Cohort)
-                .FirstOrDefaultAsync(m => m.StudentId == id);
+                .Include(s => s.StudentExercises)
+                    .ThenInclude(se => se.Exercise)
+                // You can use the commented out code instead of the .ThenInclude above to get the same result
+                //.Include("StudentExercises.Exercise")
+                .FirstOrDefaultAsync(s => s.StudentId == id);
+
             if (student == null)
             {
                 return NotFound();
