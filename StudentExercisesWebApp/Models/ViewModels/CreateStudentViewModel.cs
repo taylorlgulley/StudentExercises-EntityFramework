@@ -2,6 +2,7 @@
 using StudentExercisesWebApp.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,7 +12,10 @@ namespace StudentExercisesWebApp.Models.ViewModels
     {
         public Student Student { get; set; }
         public List<SelectListItem> AvailableExercises { get; private set; }
+
+        [Display(Name = "Selected Exercises")]
         public List<int> SelectedExercises { get; set; }
+
         public List<SelectListItem> Cohorts { get; set; }
 
         public CreateStudentViewModel() { }

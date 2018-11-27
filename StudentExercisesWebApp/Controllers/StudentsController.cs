@@ -49,7 +49,7 @@ namespace StudentExercisesWebApp.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name");
+           // ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name");
             CreateStudentViewModel model = new CreateStudentViewModel(_context);
             return View(model);
         }
