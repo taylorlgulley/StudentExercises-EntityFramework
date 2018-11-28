@@ -38,6 +38,7 @@ namespace StudentExercisesWebApp.Controllers
                 .Include(m => m.StudentExercises)
                     .ThenInclude(se => se.Student)
                 .FirstOrDefaultAsync(m => m.ExerciseId == id);
+
             if (exercise == null)
             {
                 return NotFound();
@@ -60,15 +61,6 @@ namespace StudentExercisesWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateExerciseViewModel model)
         {
-            /*
-            if (ModelState.IsValid)
-            {
-                _context.Add(model.Exercise);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(model);
-            */
 
             if (ModelState.IsValid)
             {

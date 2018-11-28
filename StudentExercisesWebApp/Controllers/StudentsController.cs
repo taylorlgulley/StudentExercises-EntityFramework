@@ -30,12 +30,13 @@ namespace StudentExercisesWebApp.Controllers
         // GET: Students/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            // return not found if no id is passed in the URL
             if (id == null)
             {
                 return NotFound();
             }
 
-
+            // Telling the database interface(context) to go get all Students from the database. Then include the cohort based on the model as well as the StudentExercises. The include in Entity is like a Join in SQL. The ThenInclude is attaching to the include above it to go deeper and join the exercise to the StudentExercise. Last only include the student who matches the id passed in the URL. The where statement to match up ids in sql is implicit in Include.
             var student = await _context.Students
                 .Include(s => s.Cohort)
                 .Include(s => s.StudentExercises)
@@ -44,18 +45,19 @@ namespace StudentExercisesWebApp.Controllers
                 //.Include("StudentExercises.Exercise")
                 .FirstOrDefaultAsync(s => s.StudentId == id);
 
+            // return not found if no student matches the detail id passed in the URL
             if (student == null)
             {
                 return NotFound();
             }
 
+            // Take the student that you placed the information you want to display and return it to the view
             return View(student);
         }
 
         // GET: Students/Create
         public IActionResult Create()
         {
-           // ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name");
             CreateStudentViewModel model = new CreateStudentViewModel(_context);
             return View(model);
         }
@@ -67,23 +69,32 @@ namespace StudentExercisesWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateStudentViewModel model)
         {
+            // If statment saying only continue if the required fields are filled out meaning the ModelState is Valid
             if (ModelState.IsValid)
             {
+                // Telling the Database Interface to Add the Student from the view model to the database
                 _context.Add(model.Student);
 
-                foreach (int exerciseId in model.SelectedExercises)
+                // A foreach looping through the SelectedExercises to create the instances of the StudentExercise for every one in the list. Then adding them to the database. The foreach works because each entry in the list is an int representing the exerciseId then it takes the student Id from the created student in the model to make the StudentExercise. Needs to be in an if statement so a person can create a student not assign them an exercise.
+                if (model.SelectedExercises != null)
                 {
-                    StudentExercise newSE = new StudentExercise()
+                    foreach (int exerciseId in model.SelectedExercises)
                     {
-                        StudentId = model.Student.StudentId,
-                        ExerciseId = exerciseId
-                    };
-                    _context.Add(newSE);
+                        StudentExercise newSE = new StudentExercise()
+                        {
+                            StudentId = model.Student.StudentId,
+                            ExerciseId = exerciseId
+                        };
+                        _context.Add(newSE);
+                    }
                 }
+                // wait for changes before commiting them to the database. This is like how copy works. Add is like copying something to the clipboard but to put it somewhere you need to paste which is the SaveChangesAsync part.
                 await _context.SaveChangesAsync();
+                // Once the new Student is created and saved redirect to the index view
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name", model.Student.CohortId);
+            // Getting the data from the database needed to make the list of cohorts to choose from. Only need if you don't do it in the view model which we did so this is not needed.
+            // ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name", model.Student.CohortId);
             return View(model);
         }
 
